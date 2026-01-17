@@ -124,6 +124,12 @@ function hideModal() {
 }
 
 // ========== Camera Stream Functions ==========
+// Expose functions to window for inline onclick handlers
+window.startCamera = startCamera;
+window.stopCamera = stopCamera;
+window.captureImage = captureImage;
+window.showModal = showModal;
+
 async function startCamera() {
   console.log("Starting camera...");
 

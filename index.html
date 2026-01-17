@@ -19,7 +19,7 @@
         <aside class="left-panel glass-panel">
             <header class="panel-header">
                 <div class="logo">RUIDAI <span class="badge">Mobile</span></div>
-                <button id="settingsBtn" class="icon-btn" title="設定">⚙️</button>
+                <button id="settingsBtn" class="icon-btn" title="設定" onclick="showModal()">⚙️</button>
             </header>
 
             <div class="upload-area">
@@ -28,16 +28,17 @@
                     <video id="cameraVideo" playsinline autoplay></video>
                     <canvas id="cameraCanvas" style="display: none;"></canvas>
                     <div class="camera-controls">
-                        <button id="captureBtn" class="capture-btn">📷 撮影</button>
-                        <button id="closeCameraBtn" class="cancel-camera-btn">✕ 閉じる</button>
+                        <button id="captureBtn" class="capture-btn" onclick="captureImage()">📷 撮影</button>
+                        <button id="closeCameraBtn" class="cancel-camera-btn" onclick="stopCamera()">✕ 閉じる</button>
                     </div>
                 </div>
 
                 <!-- Upload Trigger (visible by default) -->
-                <div id="dropZone" class="drop-zone-compact">
+                <div id="dropZone" class="drop-zone-compact" onclick="startCamera()">
                     <div class="drop-icon">📸</div>
                     <p>タップでカメラを起動</p>
-                    <button id="startCameraBtn" class="start-camera-btn">カメラを起動</button>
+                    <button id="startCameraBtn" class="start-camera-btn"
+                        onclick="event.stopPropagation(); startCamera()">カメラを起動</button>
                 </div>
             </div>
 
