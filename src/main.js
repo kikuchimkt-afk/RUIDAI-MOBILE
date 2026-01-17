@@ -33,14 +33,14 @@ function saveImages() {
 
 // DOM Elements
 let app = {};
+let mediaStream = null; // For camera stream
 
 // Initialize
 function init() {
+  console.log("Initializing RUIDAI Mobile...");
 
   app = {
     dropZone: document.getElementById("dropZone"),
-    fileInput: document.getElementById("fileInput"),
-    uploadBtn: document.getElementById("uploadBtn"),
     previewArea: document.getElementById("previewArea"),
     generateBtn: document.getElementById("generateBtn"),
     questionCount: document.getElementById("questionCount"),
@@ -51,6 +51,14 @@ function init() {
     instructorName: document.getElementById("instructorName"),
     resultSection: document.getElementById("resultSection"),
     resultContent: document.getElementById("resultContent"),
+
+    // Camera
+    cameraContainer: document.getElementById("cameraContainer"),
+    cameraVideo: document.getElementById("cameraVideo"),
+    cameraCanvas: document.getElementById("cameraCanvas"),
+    startCameraBtn: document.getElementById("startCameraBtn"),
+    captureBtn: document.getElementById("captureBtn"),
+    closeCameraBtn: document.getElementById("closeCameraBtn"),
 
     // Modal
     apiKeyModal: document.getElementById("apiKeyModal"),
@@ -115,6 +123,78 @@ function hideModal() {
   app.apiKeyModal.classList.remove("active");
 }
 
+// ========== Camera Stream Functions ==========
+async function startCamera() {
+  console.log("Starting camera...");
+
+  // Check for camera support
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("カメラ機能がサポートされていません。HTTPSまたはローカルホストで接続してください。");
+    return;
+  }
+
+  try {
+    const constraints = {
+      video: {
+        facingMode: { ideal: 'environment' }
+      }
+    };
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    app.cameraVideo.srcObject = mediaStream;
+    await app.cameraVideo.play();
+
+    // Show camera UI, hide drop zone
+    app.cameraContainer.classList.remove("hidden");
+    app.dropZone.classList.add("hidden");
+
+    console.log("Camera started successfully");
+  } catch (err) {
+    console.error("Error accessing camera:", err);
+    alert("カメラの起動に失敗しました。詳細: " + err.message);
+  }
+}
+
+function stopCamera() {
+  console.log("Stopping camera...");
+
+  if (mediaStream) {
+    const tracks = mediaStream.getTracks();
+    tracks.forEach(track => track.stop());
+    mediaStream = null;
+  }
+
+  // Hide camera UI, show drop zone
+  app.cameraContainer.classList.add("hidden");
+  app.dropZone.classList.remove("hidden");
+}
+
+function captureImage() {
+  console.log("Capturing image...");
+
+  if (app.cameraVideo && app.cameraCanvas) {
+    const video = app.cameraVideo;
+    const canvas = app.cameraCanvas;
+    const context = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL('image/png');
+
+    // Add to selectedImages
+    selectedImages.push(imageData);
+    saveImages();
+    renderPreviews();
+
+    // Stop camera after capture
+    stopCamera();
+
+    console.log("Image captured and added");
+  }
+}
+
 function setupEventListeners() {
   // Model Selection
   app.modelSelect.addEventListener("change", () => {
@@ -143,28 +223,13 @@ function setupEventListeners() {
   app.studentName.addEventListener("input", () => localStorage.setItem("ruidai_current_student", app.studentName.value));
   app.instructorName.addEventListener("input", () => localStorage.setItem("ruidai_current_instructor", app.instructorName.value));
 
-  // File Upload
-  app.uploadBtn.addEventListener("click", () => app.fileInput.click());
-  app.dropZone.addEventListener("click", () => app.fileInput.click());
+  // Camera Controls
+  app.startCameraBtn.addEventListener("click", startCamera);
+  app.dropZone.addEventListener("click", startCamera);
+  app.captureBtn.addEventListener("click", captureImage);
+  app.closeCameraBtn.addEventListener("click", stopCamera);
 
-  app.fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
-
-
-  // Drag & Drop
-  app.dropZone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    app.dropZone.classList.add("dragover");
-  });
-
-  app.dropZone.addEventListener("dragleave", () => {
-    app.dropZone.classList.remove("dragover");
-  });
-
-  app.dropZone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    app.dropZone.classList.remove("dragover");
-    handleFiles(e.dataTransfer.files);
-  });
+  console.log("Camera event listeners attached");
 
   // Paste - Enhanced for better compatibility
   document.addEventListener("paste", handlePaste);

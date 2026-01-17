@@ -23,11 +23,21 @@
             </header>
 
             <div class="upload-area">
+                <!-- Camera Stream Container (hidden by default) -->
+                <div id="cameraContainer" class="camera-container hidden">
+                    <video id="cameraVideo" playsinline autoplay></video>
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                    <div class="camera-controls">
+                        <button id="captureBtn" class="capture-btn">📷 撮影</button>
+                        <button id="closeCameraBtn" class="cancel-camera-btn">✕ 閉じる</button>
+                    </div>
+                </div>
+
+                <!-- Upload Trigger (visible by default) -->
                 <div id="dropZone" class="drop-zone-compact">
                     <div class="drop-icon">📸</div>
-                    <p>画像をタップまたはドロップして追加</p>
-                    <input type="file" id="fileInput" accept="image/*" capture="environment" multiple hidden />
-                    <button id="uploadBtn" class="upload-trigger-btn"></button>
+                    <p>タップでカメラを起動</p>
+                    <button id="startCameraBtn" class="start-camera-btn">カメラを起動</button>
                 </div>
             </div>
 
