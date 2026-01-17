@@ -1128,12 +1128,20 @@ function openPrintPreview(mode) {
   win.document.close();
 }
 
-// Wait for DOM
-document.addEventListener('DOMContentLoaded', () => {
+// Wait for DOM - Handle ES module timing issue
+function safeInit() {
   try {
     init();
   } catch (e) {
     console.error("Initialization error:", e);
     alert("アプリの初期化に失敗しました: " + e.message);
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', safeInit);
+} else {
+  // DOM is already ready, call init immediately
+  safeInit();
+}
+
