@@ -26,7 +26,7 @@
                 <div id="dropZone" class="drop-zone-compact">
                     <div class="drop-icon">📸</div>
                     <p>画像をタップまたはドロップして追加</p>
-                    <input type="file" id="fileInput" accept="image/*" multiple hidden />
+                    <input type="file" id="fileInput" accept="image/*" capture="environment" multiple hidden />
                     <button id="uploadBtn" class="upload-trigger-btn"></button>
                 </div>
             </div>
@@ -101,7 +101,8 @@
 
             <!-- Back to Edit FAB (Hidden by default) -->
             <div id="fabBack" class="action-bar-floating left hidden">
-                <button class="fab-generate secondary" onclick="location.reload()">
+                <button class="fab-generate secondary"
+                    onclick="document.getElementById('resultSection').classList.add('hidden'); document.querySelector('.left-panel').classList.remove('collapsed'); document.querySelector('.app-layout').classList.remove('full-width'); document.getElementById('fabBack').classList.add('hidden'); app.generateBtn.parentElement.classList.remove('hidden');">
                     <span>📸 画像を追加・編集する</span>
                 </button>
             </div>
