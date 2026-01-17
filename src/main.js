@@ -145,8 +145,10 @@ function setupEventListeners() {
 
   // File Upload
   app.uploadBtn.addEventListener("click", () => app.fileInput.click());
+  app.dropZone.addEventListener("click", () => app.fileInput.click());
 
   app.fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
 
   // Drag & Drop
   app.dropZone.addEventListener("dragover", (e) => {
