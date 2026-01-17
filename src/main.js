@@ -124,14 +124,15 @@ function hideModal() {
 }
 
 // ========== Camera Stream Functions ==========
-// Expose functions to window for inline onclick handlers
-window.startCamera = startCamera;
-window.stopCamera = stopCamera;
-window.captureImage = captureImage;
-window.showModal = showModal;
-
 async function startCamera() {
   console.log("Starting camera...");
+
+  // Safety check - ensure DOM elements are available
+  if (!app.cameraContainer || !app.cameraVideo || !app.dropZone) {
+    console.error("Camera DOM elements not found. Retrying initialization...");
+    init();
+    return;
+  }
 
   // Check for camera support
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -1215,4 +1216,20 @@ if (document.readyState === 'loading') {
   // DOM is already ready, call init immediately
   safeInit();
 }
+
+// ========== Expose functions to window for inline onclick handlers ==========
+// These MUST be at the end of the file after function definitions
+window.startCamera = startCamera;
+window.stopCamera = stopCamera;
+window.captureImage = captureImage;
+window.showModal = showModal;
+window.hideModal = hideModal;
+
+console.log("RUIDAI Mobile functions exposed to window:", {
+  startCamera: typeof window.startCamera,
+  stopCamera: typeof window.stopCamera,
+  captureImage: typeof window.captureImage,
+  showModal: typeof window.showModal
+});
+
 
